@@ -1,7 +1,17 @@
-document.getElementById('form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+const form = document.getElementById('form');
+const errorEl = document.getElementById('error');
+const resultEl = document.getElementById('result');
+const submitBtn = document.getElementById('submitBtn');
+const spinner = document.getElementById('spinner');
+const btnText = document.getElementById('btnText');
 
-  const data = {
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  errorEl.textContent = '';
+  resultEl.innerHTML = '';
+
+  // simple front-end validation
+  const values = {
     income: +income.value,
     expenses: +expenses.value,
     existingDebt: +debt.value,
@@ -11,18 +21,41 @@ document.getElementById('form').addEventListener('submit', async function(e) {
     loanTerm: +term.value
   };
 
-  const res = await fetch('/api/applications', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  });
+  for (let key in values) {
+    if (isNaN(values[key]) || values[key] < 0) {
+      errorEl.textContent = 'Please fill out all fields with valid numbers.';
+      return;
+    }
+  }
 
-  const result = await res.json();
+  // show loading state
+  submitBtn.disabled = true;
+  spinner.hidden = false;
+  btnText.textContent = 'Evaluating';
 
-  document.getElementById('result').innerHTML = `
-    <h2>Decision: ${result.decision}</h2>
-    <p>Risk Score: ${result.riskScore}</p>
-    <p>Risk Level: ${result.riskLevel}</p>
-    <p>Interest Rate: ${result.interestRate}%</p>
-  `;
+  try {
+    const res = await fetch('/api/applications', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(values)
+    });
+
+    if (!res.ok) throw new Error('Server error');
+
+    const result = await res.json();
+
+    resultEl.innerHTML = `
+      <h2>Decision: ${result.decision}</h2>
+      <p><strong>Risk Score:</strong> ${result.riskScore}</p>
+      <p><strong>Risk Level:</strong> ${result.riskLevel}</p>
+      <p><strong>Interest Rate:</strong> ${result.interestRate}%</p>
+    `;
+  } catch (err) {
+    errorEl.textContent = 'Unable to get a decision. Please try again later.';
+    console.error(err);
+  } finally {
+    submitBtn.disabled = false;
+    spinner.hidden = true;
+    btnText.textContent = 'Evaluate';
+  }
 });

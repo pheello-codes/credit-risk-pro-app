@@ -7,17 +7,50 @@
 <body>
   <div class="container">
     <h1>Credit Risk Simulator</h1>
-    <form id="form">
-      <input type="number" placeholder="Monthly Income" id="income" required />
-      <input type="number" placeholder="Monthly Expenses" id="expenses" required />
-      <input type="number" placeholder="Existing Debt" id="debt" required />
-      <input type="number" placeholder="Employment Years" id="employment" required />
-      <input type="number" placeholder="Credit Score" id="credit" required />
-      <input type="number" placeholder="Loan Amount" id="loan" required />
-      <input type="number" placeholder="Loan Term (Months)" id="term" required />
-      <button type="submit">Evaluate</button>
+    <form id="form" novalidate>
+      <div class="row">
+        <div class="form-group col-half">
+          <label for="income">Monthly Income (ZAR)</label>
+          <input type="number" placeholder="e.g. 5000" id="income" required min="0" step="0.01" />
+        </div>
+        <div class="form-group col-half">
+          <label for="expenses">Monthly Expenses (ZAR)</label>
+          <input type="number" placeholder="e.g. 2000" id="expenses" required min="0" step="0.01" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-half">
+          <label for="debt">Existing Debt (ZAR)</label>
+          <input type="number" placeholder="e.g. 10000" id="debt" required min="0" step="0.01" />
+        </div>
+        <div class="form-group col-half">
+          <label for="employment">Employment Years</label>
+          <input type="number" placeholder="e.g. 5" id="employment" required min="0" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-half">
+          <label for="credit">Credit Score</label>
+          <input type="number" placeholder="300–850" id="credit" required min="300" max="850" />
+        </div>
+        <div class="form-group col-half">
+          <label for="loan">Loan Amount (ZAR)</label>
+          <input type="number" placeholder="e.g. 15000" id="loan" required min="0" step="0.01" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-half">
+          <label for="term">Loan Term (Months)</label>
+          <input type="number" placeholder="e.g. 60" id="term" required min="1" />
+        </div>
+      </div>
+      <button type="submit" id="submitBtn">
+        <span id="btnText">Evaluate</span>
+        <span id="spinner" class="spinner" aria-hidden="true" hidden></span>
+      </button>
+      <div id="error" class="error-message" aria-live="polite"></div>
     </form>
-    <div id="result"></div>
+    <div id="result" class="result-card" aria-live="polite"></div>
   </div>
   <script src="js/script.js"></script>
 </body>
